@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using StudioSessionOrderForm.Commands;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -8,15 +9,22 @@ namespace StudioSessionOrderForm.ViewModels
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        // PropertyChanged event and invokation method
 
+        public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        // Commands declaration
+
+        public AsyncRelayCommand SaveOrderCommand { get; }
+        public RelayCommand ResetOrderCommand { get; }
 
         // Current studio
 
         public Studio CurrentStudio { get; }
-        public Studio Studio => CurrentStudio;
+
+        public Studio Studio { get; } // Used for XAML bindings!
 
         // Selection state
 
@@ -32,6 +40,7 @@ namespace StudioSessionOrderForm.ViewModels
                     if (field != null) IsSelectedCustomerValid = true;
                     IsAllOrderDataValidatedAfterLastChange = false;
                     OnPropertyChanged();
+                    ResetOrderCommand.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -50,6 +59,7 @@ namespace StudioSessionOrderForm.ViewModels
                     CalculateOrderTotalCost();
                     IsAllOrderDataValidatedAfterLastChange = false;
                     OnPropertyChanged();
+                    ResetOrderCommand.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -67,6 +77,7 @@ namespace StudioSessionOrderForm.ViewModels
                     CalculateOrderTotalCost();
                     IsAllOrderDataValidatedAfterLastChange = false;
                     OnPropertyChanged();
+                    ResetOrderCommand.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -83,6 +94,7 @@ namespace StudioSessionOrderForm.ViewModels
                     CalculateOrderTotalCost();
                     IsAllOrderDataValidatedAfterLastChange = false;
                     OnPropertyChanged();
+                    ResetOrderCommand.RaiseCanExecuteChanged();
                 }
             }
         } = false;
@@ -120,6 +132,7 @@ namespace StudioSessionOrderForm.ViewModels
                         CalculateOrderTotalCost();
                     }
                     OnPropertyChanged();
+                    ResetOrderCommand.RaiseCanExecuteChanged();
                 }
             }
         } = "";
@@ -155,6 +168,7 @@ namespace StudioSessionOrderForm.ViewModels
                         CalculateOrderTotalCost();
                     }
                     OnPropertyChanged();
+                    ResetOrderCommand.RaiseCanExecuteChanged();
                 }
             }
         } = "";
@@ -282,6 +296,7 @@ namespace StudioSessionOrderForm.ViewModels
                 {
                     field = value;
                     OnPropertyChanged();
+                    ResetOrderCommand.RaiseCanExecuteChanged();
                 }
             }
         } = false;
@@ -296,6 +311,7 @@ namespace StudioSessionOrderForm.ViewModels
                 {
                     field = value;
                     OnPropertyChanged();
+                    ResetOrderCommand.RaiseCanExecuteChanged();
                 }
             }
         } = false;
@@ -310,6 +326,7 @@ namespace StudioSessionOrderForm.ViewModels
                 {
                     field = value;
                     OnPropertyChanged();
+                    ResetOrderCommand.RaiseCanExecuteChanged();
                 }
             }
         } = false;
@@ -324,6 +341,7 @@ namespace StudioSessionOrderForm.ViewModels
                 {
                     field = value;
                     OnPropertyChanged();
+                    ResetOrderCommand.RaiseCanExecuteChanged();
                 }
             }
         } = false;
@@ -338,9 +356,12 @@ namespace StudioSessionOrderForm.ViewModels
                 {
                     field = value;
                     OnPropertyChanged();
+                    ResetOrderCommand.RaiseCanExecuteChanged();
                 }
             }
         } = false;
+
+        private bool _isBlinkingNow;
 
         // Selection lists
 
@@ -352,7 +373,10 @@ namespace StudioSessionOrderForm.ViewModels
 
         public MainWindowViewModel()
         {
-            CurrentStudio = new Studio("DataVoxViewModel");
+            CurrentStudio = new Studio("DataVox");
+            Studio = CurrentStudio; // Used for XAML bindings!
+            SaveOrderCommand = new AsyncRelayCommand(SaveOrderAsync);
+            ResetOrderCommand = new RelayCommand(ResetOrderData, CanResetOrderData);
         }
 
         // Calculation methods
@@ -471,6 +495,8 @@ namespace StudioSessionOrderForm.ViewModels
                 target(value);
         }
 
+        // Buttons related methods
+
         public async Task SaveOrderAsync()
         {
             int activeWarningsBeforeValidation = CalculateActiveWarnings();
@@ -482,7 +508,16 @@ namespace StudioSessionOrderForm.ViewModels
 
                 if (activeWarningsBeforeValidation == activeWarningsAfterValidation)
                 {
-                    await BlinkAllWarningsAsync(CreateWarningBordersActionList(), 3, 90);
+                    _isBlinkingNow = true;
+
+                    try
+                    {
+                        await BlinkAllWarningsAsync(CreateWarningBordersActionList(), 3, 90);
+                    }
+                    finally
+                    {
+                        _isBlinkingNow = false;
+                    }
                 }
             }
         }
@@ -505,6 +540,24 @@ namespace StudioSessionOrderForm.ViewModels
             IsProductCostDiscountTextValid = true;
 
             IsUrgentSurchargeApplied = false;
+        }
+
+        private bool CanResetOrderData()
+        {
+            if (_isBlinkingNow) return true;
+
+            return
+                SelectedCustomer != null
+                || SelectedProduct != null
+                || SelectedDuration != null
+                || !string.IsNullOrWhiteSpace(ProductCostPerHourText)
+                || !string.IsNullOrWhiteSpace(ProductCostDiscountText)
+                || IsUrgentSurchargeApplied
+                || IsCustomerWarningBorderActive
+                || IsProductWarningBorderActive
+                || IsDurationWarningBorderActive
+                || IsCostPerHourWarningBorderActive
+                || IsCostDiscountWarningBorderActive;
         }
     }
 }
