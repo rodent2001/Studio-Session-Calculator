@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StudioSessionOrderForm"
         mc:Ignorable="d"
-        Title="Music Studio Session Order Form v0.2.0"
+        Title="Music Studio Session Order Form v0.3.0"
         Width="400"
         SizeToContent="Height"
         ResizeMode="NoResize"
