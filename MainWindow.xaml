@@ -418,7 +418,7 @@
                 Content="Save order"
                 VerticalAlignment="Top"
                 Padding="5,1"
-                Click="SaveOrderButton_Click"
+                Command="{Binding SaveOrderCommand}"
                 />
             <Border
                 Width="10"
@@ -427,7 +427,7 @@
                 Content="Reset data"
                 VerticalAlignment="Top"
                 Padding="5,1"
-                Click="ResetDataButton_Click"
+                Command="{Binding ResetOrderCommand}"
                 />
         </StackPanel>
 <!--**************-->
