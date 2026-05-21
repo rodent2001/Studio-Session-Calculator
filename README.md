@@ -1,5 +1,14 @@
 # Studio Session Order Form
 
+### v0.3.0 — Add WPF commands and async command support
+
+- Replaced button Click handlers with WPF commands
+- Added RelayCommand for synchronous actions
+- Added AsyncRelayCommand for async Task-based actions
+- Added CanExecute logic for Reset data
+- Save order is temporarily disabled while async operation is running
+- MainWindow.xaml.cs no longer contains button event handlers
+
 ### v0.2.0 — Basic MVVM refactor
 
 - Added `MainWindowViewModel`
