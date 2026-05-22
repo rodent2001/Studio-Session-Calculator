@@ -1,31 +1,8 @@
 # Studio Session Order Form
 
-### v0.3.0 — Add WPF commands and async command support
+## Current version
 
-- Replaced button Click handlers with WPF commands
-- Added RelayCommand for synchronous actions
-- Added AsyncRelayCommand for async Task-based actions
-- Added CanExecute logic for Reset data
-- Save order is temporarily disabled while async operation is running
-- MainWindow.xaml.cs no longer contains button event handlers
-
-### v0.2.0 — Basic MVVM refactor
-
-- Added `MainWindowViewModel`
-- Moved form state from `MainWindow.xaml.cs` to ViewModel
-- Moved validation logic to ViewModel
-- Moved price calculation logic to ViewModel
-- Moved Save and Reset workflows to ViewModel
-- Reduced `MainWindow.xaml.cs` to thin code-behind
-- Preserved existing UI behavior
-
-### v0.1.0 — Initial working version
-
-- Basic WPF order form
-- Customer, session type and duration selection
-- Price per hour, discount and urgent surcharge handling
-- Total cost calculation
-- Validation warning borders
+The current version is v0.3.0 - Add WPF commands and async command support 
 
 ## Overview
 
@@ -51,6 +28,10 @@ The app allows users to select session options, apply discounts or urgent bookin
 1. Open the project in Visual Studio 2026.
 2. Build the project.
 3. Run the application.
+
+## Changelog
+
+To see the Changelog.md [click here](Changelog.md)
 
 ## Screenshots
 
